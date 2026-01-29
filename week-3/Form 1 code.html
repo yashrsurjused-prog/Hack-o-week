@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registration Form</title>
+
+<style>
+body {
+  background: url(SIT.jpg) center/cover;
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.container {
+  background: rgba(208, 226, 219, 0.9);
+  padding: 20px 30px;
+  width: 350px;
+  border-radius: 20px;
+  box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="date"],
+select,
+input[type="file"] {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #333;
+}
+
+.options {
+  margin-top: 5px;
+}
+
+.buttons {
+  text-align: center;
+  margin-top: 15px;
+}
+
+input[type="submit"],
+input[type="reset"] {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+input[type="submit"] {
+  background: #2575fc;
+  color: white;
+}
+
+input[type="reset"] {
+  background: #777;
+  color: white;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<h1>Enthusia 5.0</h1>
+
+<form method="post" enctype="multipart/form-data">
+
+<label>Name:</label>
+<input type="text" name="name" required>
+
+<label>PRN:</label>
+<input type="text" name="prn" required>
+
+<label>Date of Birth:</label>
+<input type="date" name="dob" required>
+
+<label>Gender:</label>
+<div class="options">
+<input type="radio" name="gender" required> Male
+<input type="radio" name="gender"> Female
+<input type="radio" name="gender"> Other
+</div>
+
+<label>Institute:</label>
+<div class="options">
+<input type="radio" name="institute" required> SCMS
+<input type="radio" name="institute"> SIT
+<input type="radio" name="institute"> SLS
+</div>
+
+<label>Events:</label>
+<div class="options">
+<input type="checkbox"> Singing
+<input type="checkbox"> Dance
+<input type="checkbox"> Drama
+<input type="checkbox"> Standup Comedy
+</div>
+
+<label>Dress Colour</label>
+<input type="color">
+
+<label>Section:</label>
+<select required>
+<option value="">Select</option>
+<option>A</option>
+<option>B</option>
+<option>C</option>
+<option>D</option>
+</select>
+
+<label>Semester:</label>
+<select required>
+<option value="">Select</option>
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+</select>
+
+<label>Upload Photo:</label>
+<input type="file" required>
+
+<div class="buttons">
+<input type="reset">
+<input type="submit">
+</div>
+
+</form>
+</div>
+</body>
+</html>
