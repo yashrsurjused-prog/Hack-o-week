@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sports Event Form</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+
+        background-image: url("file:///C:/Users/Angad%20Mankar/Downloads/sports.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+
+.form {
+    width: 450px;
+    padding: 30px;
+
+      background-color: rgba(255, 255, 255, 0.55);
+
+    min-height: 200vh;
+}
+h1 {
+    color: darkred;
+    margin-top: 0;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-top: 15px;
+}
+
+input, textarea {
+    width: 90%;
+    padding: 6px;
+    margin-top: 5px;
+}
+
+textarea {
+    height: 80px;
+}
+
+input[type="radio"] {
+    width: auto;
+}
+
+input[type="submit"] {
+    width: 200px;
+    margin-top: 20px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="form">
+
+<h1>SPORT-SAGA</h1>
+<p>Welcome to the SIT 2025 Sports Event</p>
+
+<label>First Name</label>
+<input type="text">
+
+<label>Last Name</label>
+<input type="text">
+
+<label>Select Sport</label>
+<input type="radio" name="sport"> Cricket <br>
+<input type="radio" name="sport"> Football <br>
+<input type="radio" name="sport"> Badminton <br>
+<input type="radio" name="sport"> Volleyball <br>
+<input type="radio" name="sport"> Basketball <br>
+
+<label>Section</label>
+<input type="radio" name="sec"> A
+<input type="radio" name="sec"> B
+<input type="radio" name="sec"> C
+<input type="radio" name="sec"> D
+<input type="radio" name="sec"> E
+
+<label>Jersey Colour</label>
+<input type="color">
+
+<label>Email</label>
+<input type="email">
+
+<label>PRN</label>
+<input type="text">
+
+<label>Health Issues</label>
+<input type="radio" name="health"> Yes
+<input type="radio" name="health"> No
+
+<label>Description</label>
+<textarea></textarea>
+
+<label>Emergency Contact</label>
+<input type="text">
+
+<label>Blood Group</label>
+<input type="text">
+
+<label>Any Previous Participation</label>
+<textarea></textarea>
+
+<input type="submit" value="Submit">
+
+</div>
+
+</body>
+</html>
