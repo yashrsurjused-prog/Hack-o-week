@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Task Tracker</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&amp;family=Merriweather:wght@400;700&amp;family=Space+Grotesk:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    .elderly-font { font-family: 'Merriweather', Georgia, serif; }
+    .college-font { font-family: 'Space Grotesk', system-ui, sans-serif; }
+    .school-font { font-family: 'Nunito', 'Comic Sans MS', cursive, sans-serif; }
+    
+    .tab-active { transform: translateY(-2px); }
+    .task-item { animation: slideIn 0.3s ease-out; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes bounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    .check-bounce { animation: bounce 0.3s ease-out; }
+    
+    .elderly-card { box-shadow: 0 4px 20px rgba(139, 69, 19, 0.15); }
+    .college-card { box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2); }
+    .school-card { box-shadow: 0 8px 25px rgba(251, 146, 60, 0.25); }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full bg-slate-100">
+  <div id="app" class="h-full w-full overflow-auto"><!-- Navigation Tabs -->
+   <nav id="nav-tabs" class="flex justify-center gap-2 p-4 bg-white shadow-md sticky top-0 z-10"><button onclick="switchPage('elderly')" id="tab-elderly" class="px-6 py-3 rounded-full font-semibold transition-all duration-300 bg-amber-100 text-amber-800 hover:bg-amber-200"> 👴 Elderly </button> <button onclick="switchPage('college')" id="tab-college" class="px-6 py-3 rounded-full font-semibold transition-all duration-300 bg-indigo-100 text-indigo-800 hover:bg-indigo-200"> 🎓 College </button> <button onclick="switchPage('school')" id="tab-school" class="px-6 py-3 rounded-full font-semibold transition-all duration-300 bg-orange-100 text-orange-800 hover:bg-orange-200"> 📚 School </button>
+   </nav><!-- ELDERLY PAGE -->
+   <div id="page-elderly" class="page hidden p-6">
+    <div class="max-w-2xl mx-auto">
+     <div class="elderly-card bg-amber-50 rounded-3xl p-8 border-4 border-amber-200">
+      <h1 id="elderly-heading" class="elderly-font text-4xl font-bold text-amber-900 text-center mb-2">📋 My Daily Tasks</h1>
+      <p class="elderly-font text-xl text-amber-700 text-center mb-8">Keep track of your day, one task at a time</p>
+      <form onsubmit="addTask(event, 'elderly')" class="flex gap-3 mb-8"><input type="text" id="input-elderly" placeholder="What do you need to do today?" class="elderly-font flex-1 px-6 py-4 text-xl rounded-2xl border-3 border-amber-300 focus:border-amber-500 focus:ring-4 focus:ring-amber-200 outline-none bg-white"> <button type="submit" class="px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white text-xl font-bold rounded-2xl transition-colors shadow-lg"> ✚ Add </button>
+      </form>
+      <div id="tasks-elderly" class="space-y-4"></div>
+      <div id="empty-elderly" class="text-center py-12 text-amber-600 elderly-font text-xl hidden">
+       <p class="text-5xl mb-4">☀️</p>
+       <p>No tasks yet. Add one above!</p>
+      </div>
+     </div>
+    </div>
+   </div><!-- COLLEGE PAGE -->
+   <div id="page-college" class="page hidden p-6">
+    <div class="max-w-2xl mx-auto">
+     <div class="college-card bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 rounded-2xl p-6 border border-indigo-500/30">
+      <h1 id="college-heading" class="college-font text-3xl font-bold text-white text-center mb-1">⚡ Campus To-Do</h1>
+      <p class="college-font text-indigo-300 text-center mb-6">Crush your assignments like a pro</p>
+      <form onsubmit="addTask(event, 'college')" class="flex gap-2 mb-6"><input type="text" id="input-college" placeholder="Assignment, project, exam prep..." class="college-font flex-1 px-4 py-3 text-base rounded-xl border border-indigo-500/50 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-500/50 outline-none bg-slate-800/50 text-white placeholder-indigo-400"> <button type="submit" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl transition-all shadow-lg shadow-indigo-500/30"> Add Task </button>
+      </form>
+      <div id="tasks-college" class="space-y-3"></div>
+      <div id="empty-college" class="text-center py-10 text-indigo-400 college-font hidden">
+       <p class="text-4xl mb-3">🎯</p>
+       <p>All clear! Time to add some tasks.</p>
+      </div>
+     </div>
+    </div>
+   </div><!-- SCHOOL PAGE -->
+   <div id="page-school" class="page hidden p-6">
+    <div class="max-w-2xl mx-auto">
+     <div class="school-card bg-gradient-to-br from-orange-100 via-yellow-50 to-pink-100 rounded-3xl p-6 border-4 border-orange-300">
+      <h1 id="school-heading" class="school-font text-3xl font-extrabold text-orange-600 text-center mb-1">🌟 My Homework</h1>
+      <p class="school-font text-lg text-orange-500 text-center mb-6">Let's get stuff done! You've got this! 💪</p>
+      <form onsubmit="addTask(event, 'school')" class="flex gap-2 mb-6"><input type="text" id="input-school" placeholder="Math homework, reading, project..." class="school-font flex-1 px-4 py-3 text-lg rounded-2xl border-3 border-orange-300 focus:border-orange-500 focus:ring-4 focus:ring-orange-200 outline-none bg-white"> <button type="submit" class="px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white text-lg font-bold rounded-2xl transition-all shadow-lg"> ➕ Add! </button>
+      </form>
+      <div id="tasks-school" class="space-y-3"></div>
+      <div id="empty-school" class="text-center py-10 text-orange-500 school-font text-lg hidden">
+       <p class="text-5xl mb-3">🎈</p>
+       <p>No homework yet! Enjoy your free time!</p>
+      </div>
+      <div id="reward-school" class="hidden text-center py-6 bg-gradient-to-r from-green-400 to-emerald-500 rounded-2xl mt-6">
+       <p class="text-4xl mb-2">🏆</p>
+       <p class="school-font text-xl font-bold text-white">Amazing! All tasks done!</p>
+      </div>
+     </div>
+    </div>
+   </div><!-- Limit Warning -->
+   <div id="limit-warning" class="hidden fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg z-50">
+    ⚠️ Maximum 999 tasks reached. Please delete some tasks first.
+   </div>
+  </div>
+  <script>
+    // State
+    let allTasks = [];
+    let currentPage = 'elderly';
+    let recordCount = 0;
+
+    const defaultConfig = {
+      elderly_title: 'My Daily Tasks',
+      college_title: 'Campus To-Do',
+      school_title: 'My Homework',
+      primary_color: '#f59e0b',
+      secondary_color: '#fef3c7',
+      text_color: '#78350f',
+      accent_color: '#6366f1',
+      button_color: '#d97706',
+      font_family: 'inherit',
+      font_size: 16
+    };
+
+    // Switch between pages
+    function switchPage(page) {
+      currentPage = page;
+      document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+      document.getElementById(`page-${page}`).classList.remove('hidden');
+      
+      // Update tab styles
+      document.querySelectorAll('#nav-tabs button').forEach(btn => {
+        btn.classList.remove('tab-active', 'ring-2', 'ring-offset-2');
+      });
+      const activeTab = document.getElementById(`tab-${page}`);
+      activeTab.classList.add('tab-active', 'ring-2', 'ring-offset-2');
+      
+      if (page === 'elderly') activeTab.classList.add('ring-amber-500');
+      else if (page === 'college') activeTab.classList.add('ring-indigo-500');
+      else activeTab.classList.add('ring-orange-500');
+      
+      renderTasks();
+    }
+
+    // Add new task
+    async function addTask(e, category) {
+      e.preventDefault();
+      
+      if (recordCount >= 999) {
+        document.getElementById('limit-warning').classList.remove('hidden');
+        setTimeout(() => document.getElementById('limit-warning').classList.add('hidden'), 3000);
+        return;
+      }
+      
+      const input = document.getElementById(`input-${category}`);
+      const text = input.value.trim();
+      if (!text) return;
+      
+      input.disabled = true;
+      
+      const task = {
+        id: Date.now().toString(),
+        text: text,
+        completed: false,
+        category: category,
+        createdAt: new Date().toISOString()
+      };
+      
+      const result = await window.dataSdk.create(task);
+      
+      if (result.isOk) {
+        input.value = '';
+      } else {
+        console.error('Failed to create task');
+      }
+      
+      input.disabled = false;
+      input.focus();
+    }
+
+    // Toggle task completion
+    async function toggleTask(taskId) {
+      const task = allTasks.find(t => t.id === taskId);
+      if (!task) return;
+      
+      const checkbox = document.querySelector(`[data-task-id="${taskId}"] input[type="checkbox"]`);
+      if (checkbox) checkbox.disabled = true;
+      
+      const updatedTask = { ...task, completed: !task.completed };
+      const result = await window.dataSdk.update(updatedTask);
+      
+      if (!result.isOk) {
+        console.error('Failed to update task');
+      }
+      
+      if (checkbox) checkbox.disabled = false;
+    }
+
+    // Delete task
+    async function deleteTask(taskId) {
+      const task = allTasks.find(t => t.id === taskId);
+      if (!task) return;
+      
+      const btn = document.querySelector(`[data-task-id="${taskId}"] .delete-btn`);
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = '...';
+      }
+      
+      const result = await window.dataSdk.delete(task);
+      
+      if (!result.isOk) {
+        console.error('Failed to delete task');
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '✕';
+        }
+      }
+    }
+
+    // Render tasks for current page
+    function renderTasks() {
+      const categories = ['elderly', 'college', 'school'];
+      
+      categories.forEach(category => {
+        const container = document.getElementById(`tasks-${category}`);
+        const emptyState = document.getElementById(`empty-${category}`);
+        const tasks = allTasks.filter(t => t.category === category);
+        
+        // Build map of existing elements
+        const existingItems = new Map();
+        container.querySelectorAll('.task-item').forEach(el => {
+          existingItems.set(el.dataset.taskId, el);
+        });
+        
+        // Update or create items
+        tasks.forEach(task => {
+          if (existingItems.has(task.id)) {
+            // Update existing
+            const el = existingItems.get(task.id);
+            updateTaskElement(el, task, category);
+            existingItems.delete(task.id);
+          } else {
+            // Create new
+            container.appendChild(createTaskElement(task, category));
+          }
+        });
+        
+        // Remove deleted
+        existingItems.forEach(el => el.remove());
+        
+        // Toggle empty state
+        if (tasks.length === 0) {
+          emptyState.classList.remove('hidden');
+        } else {
+          emptyState.classList.add('hidden');
+        }
+        
+        // School reward
+        if (category === 'school') {
+          const reward = document.getElementById('reward-school');
+          const allDone = tasks.length > 0 && tasks.every(t => t.completed);
+          if (allDone) {
+            reward.classList.remove('hidden');
+          } else {
+            reward.classList.add('hidden');
+          }
+        }
+      });
+    }
+
+    // Create task element
+    function createTaskElement(task, category) {
+      const div = document.createElement('div');
+      div.className = 'task-item';
+      div.dataset.taskId = task.id;
+      updateTaskElement(div, task, category);
+      return div;
+    }
+
+    // Update task element
+    function updateTaskElement(el, task, category) {
+      const styles = {
+        elderly: {
+          bg: task.completed ? 'bg-green-100' : 'bg-white',
+          border: 'border-2 border-amber-200',
+          text: task.completed ? 'text-green-700 line-through' : 'text-amber-900',
+          font: 'elderly-font text-xl',
+          checkbox: 'w-7 h-7 accent-amber-600',
+          deleteBtn: 'text-2xl text-red-400 hover:text-red-600 px-3'
+        },
+        college: {
+          bg: task.completed ? 'bg-green-900/30' : 'bg-slate-800/50',
+          border: 'border border-indigo-500/30',
+          text: task.completed ? 'text-green-400 line-through' : 'text-white',
+          font: 'college-font text-base',
+          checkbox: 'w-5 h-5 accent-indigo-500',
+          deleteBtn: 'text-lg text-red-400 hover:text-red-300 px-2'
+        },
+        school: {
+          bg: task.completed ? 'bg-green-200' : 'bg-white',
+          border: 'border-2 border-orange-200',
+          text: task.completed ? 'text-green-600 line-through' : 'text-orange-800',
+          font: 'school-font text-lg',
+          checkbox: 'w-6 h-6 accent-orange-500',
+          deleteBtn: 'text-xl text-red-400 hover:text-red-500 px-2'
+        }
+      };
+      
+      const s = styles[category];
+      
+      el.innerHTML = `
+        <div class="flex items-center gap-3 p-4 rounded-2xl ${s.bg} ${s.border} transition-all">
+          <input type="checkbox" ${task.completed ? 'checked' : ''} 
+            onchange="toggleTask('${task.id}')"
+            class="${s.checkbox} cursor-pointer ${task.completed ? 'check-bounce' : ''}">
+          <span class="flex-1 ${s.font} ${s.text}">${escapeHtml(task.text)}</span>
+          <button onclick="deleteTask('${task.id}')" class="delete-btn ${s.deleteBtn} font-bold transition-colors">✕</button>
+        </div>
+      `;
+    }
+
+    // Escape HTML
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Data handler
+    const dataHandler = {
+      onDataChanged(data) {
+        allTasks = data;
+        recordCount = data.length;
+        renderTasks();
+      }
+    };
+
+    // Element SDK config change handler
+    async function onConfigChange(config) {
+      const elderlyTitle = config.elderly_title || defaultConfig.elderly_title;
+      const collegeTitle = config.college_title || defaultConfig.college_title;
+      const schoolTitle = config.school_title || defaultConfig.school_title;
+      
+      document.getElementById('elderly-heading').textContent = `📋 ${elderlyTitle}`;
+      document.getElementById('college-heading').textContent = `⚡ ${collegeTitle}`;
+      document.getElementById('school-heading').textContent = `🌟 ${schoolTitle}`;
+      
+      // Apply font
+      const fontFamily = config.font_family || defaultConfig.font_family;
+      if (fontFamily !== 'inherit') {
+        document.body.style.fontFamily = fontFamily;
+      }
+    }
+
+    // Map to capabilities
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.primary_color || defaultConfig.primary_color,
+            set: (v) => { config.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); }
+          },
+          {
+            get: () => config.secondary_color || defaultConfig.secondary_color,
+            set: (v) => { config.secondary_color = v; window.elementSdk.setConfig({ secondary_color: v }); }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); }
+          },
+          {
+            get: () => config.accent_color || defaultConfig.accent_color,
+            set: (v) => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); }
+          },
+          {
+            get: () => config.button_color || defaultConfig.button_color,
+            set: (v) => { config.button_color = v; window.elementSdk.setConfig({ button_color: v }); }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+        }
+      };
+    }
+
+    // Map to edit panel values
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ['elderly_title', config.elderly_title || defaultConfig.elderly_title],
+        ['college_title', config.college_title || defaultConfig.college_title],
+        ['school_title', config.school_title || defaultConfig.school_title]
+      ]);
+    }
+
+    // Initialize
+    async function init() {
+      // Initialize Element SDK
+      if (window.elementSdk) {
+        window.elementSdk.init({
+          defaultConfig,
+          onConfigChange,
+          mapToCapabilities,
+          mapToEditPanelValues
+        });
+      }
+      
+      // Initialize Data SDK
+      const result = await window.dataSdk.init(dataHandler);
+      if (!result.isOk) {
+        console.error('Failed to initialize data SDK');
+      }
+      
+      // Show first page
+      switchPage('elderly');
+    }
+
+    init();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9daa2a44a6b8aed9',t:'MTc3MzIyNzk3Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
