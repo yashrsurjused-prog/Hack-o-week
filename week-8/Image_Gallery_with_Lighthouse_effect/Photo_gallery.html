@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Gallery | Secure Access</title>
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --bg-black: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-black);
+            color: white;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Login Section */
+        #login-screen {
+            position: fixed;
+            width: 100%; height: 100%;
+            background: linear-gradient(45deg, #000, #1a1a1a);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 2000;
+            transition: 0.5s;
+        }
+
+        .login-box {
+            background: var(--glass);
+            padding: 40px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            width: 350px;
+        }
+
+        input {
+            width: 100%; padding: 12px; margin: 10px 0;
+            background: rgba(0,0,0,0.5); border: 1px solid #444;
+            color: white; border-radius: 5px;
+        }
+
+        button {
+            width: 100%; padding: 12px; background: var(--primary-color);
+            border: none; color: white; border-radius: 5px; cursor: pointer;
+            font-weight: bold; margin-top: 10px;
+        }
+
+        /* Gallery Section */
+        #main-content {
+            display: none; /* Hidden until login */
+            padding: 40px 20px;
+            height: 100vh; overflow-y: auto;
+        }
+
+        .header { margin-bottom: 40px; text-align: center; }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px; max-width: 1100px; margin: auto;
+        }
+
+        .gallery-item {
+            position: relative; overflow: hidden;
+            border-radius: 10px; cursor: pointer;
+            aspect-ratio: 1/1;
+        }
+
+        .gallery-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: 0.5s ease;
+        }
+
+        .gallery-item:hover img { transform: scale(1.1); filter: brightness(0.7); }
+
+        /* Lightbox */
+        #lightbox {
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.95);
+            z-index: 3000; justify-content: center; align-items: center;
+            cursor: pointer;
+        }
+
+        #lightbox img { max-width: 85%; max-height: 85%; border-radius: 5px; box-shadow: 0 0 30px rgba(0,123,255,0.3); }
+
+        @media (max-width: 768px) { .gallery-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <h2>Client Portal</h2>
+            <p style="font-size: 12px; color: #888; margin-bottom: 20px;">Use: admin / 1234</p>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button onclick="handleLogin()">Sign In</button>
+            <p id="error" style="color: #ff4d4d; font-size: 13px; margin-top: 10px; display: none;">Invalid credentials</p>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <div class="header">
+            <h1>Yash Gallery</h1>
+            <p style="color: #888;">High-Resolution Asset Collection</p>
+        </div>
+
+        <div class="gallery-grid">
+            <div class="gallery-item"><img src="https://picsum.photos/id/237/800/800" onclick="pop(this)"></div>
+            <div class="gallery-item"><img src="https://picsum.photos/id/238/800/800" onclick="pop(this)"></div>
+            <div class="gallery-item"><img src="https://picsum.photos/id/239/800/800" onclick="pop(this)"></div>
+            <div class="gallery-item"><img src="https://picsum.photos/id/240/800/800" onclick="pop(this)"></div>
+            <div class="gallery-item"><img src="https://picsum.photos/id/241/800/800" onclick="pop(this)"></div>
+            <div class="gallery-item"><img src="https://picsum.photos/id/242/800/800" onclick="pop(this)"></div>
+            <div class="gallery-item"><img src="https://picsum.photos/id/243/800/800" onclick="pop(this)"></div>
+            <div class="gallery-item"><img src="https://picsum.photos/id/244/800/800" onclick="pop(this)"></div>
+            <div class="gallery-item"><img src="https://picsum.photos/id/247/800/800" onclick="pop(this)"></div>
+        </div>
+    </div>
+
+    <div id="lightbox" onclick="this.style.display='none'">
+        <img id="lightbox-img">
+    </div>
+
+    <script>
+        function handleLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            
+            // Simple logic: User: admin | Pass: 1234
+            if(u === "admin" && p === "1234") {
+                document.getElementById('login-screen').style.opacity = "0";
+                setTimeout(() => {
+                    document.getElementById('login-screen').style.display = "none";
+                    document.getElementById('main-content').style.display = "block";
+                    document.body.style.overflow = "auto";
+                }, 500);
+            } else {
+                document.getElementById('error').style.display = "block";
+            }
+        }
+
+        function pop(img) {
+            const lb = document.getElementById('lightbox');
+            const lbImg = document.getElementById('lightbox-img');
+            lb.style.display = 'flex';
+            lbImg.src = img.src;
+        }
+    </script>
+</body>
+</html>
