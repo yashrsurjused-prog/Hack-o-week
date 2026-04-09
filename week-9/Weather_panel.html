@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>India Regional Center | Weather Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep-slate: #020617;
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-white: #ffffff;
+            --text-muted: #94a3b8;
+            /* High-Contrast Scrim for professional readability */
+            --vignette-scrim: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.95) 95%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body {
+            background-color: var(--bg-deep-slate);
+            color: var(--text-white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 50px;
+            z-index: 10;
+        }
+
+        .dashboard-header h1 { 
+            font-size: 3.5rem; 
+            font-weight: 700; 
+            letter-spacing: -1.5px;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .dashboard-header p { 
+            font-size: 0.9rem; 
+            text-transform: uppercase; 
+            letter-spacing: 5px; 
+            color: var(--text-muted); 
+            font-weight: 500;
+        }
+
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 100%;
+            max-width: 1250px;
+        }
+
+        .city-card {
+            position: relative;
+            height: 520px;
+            border-radius: 40px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 45px;
+            cursor: pointer;
+        }
+
+        .city-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+        }
+
+        .city-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+            transition: transform 1.2s ease;
+        }
+
+        .city-card:hover .city-bg { transform: scale(1.1); }
+
+        .scrim {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--vignette-scrim);
+            z-index: 2;
+        }
+
+        .card-content { position: relative; z-index: 3; }
+
+        .tag {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .city-name { font-size: 2.6rem; font-weight: 700; margin-bottom: 5px; }
+        
+        .temp-row { display: flex; align-items: baseline; margin: 12px 0; position: relative; }
+        
+        .temp-val { 
+            font-size: 5.5rem; 
+            font-weight: 800; 
+            line-height: 1; 
+            position: relative;
+        }
+
+        /* Temperature Pulse Effect */
+        .temp-val::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            right: -25px;
+            width: 12px;
+            height: 12px;
+            background-color: #fbbf24; 
+            border-radius: 50%;
+            box-shadow: 0 0 15px #fbbf24;
+            animation: livePulse 2s infinite;
+        }
+
+        @keyframes livePulse {
+            0% { transform: scale(0.9); opacity: 0.8; box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
+            70% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 0 12px rgba(251, 191, 36, 0); }
+            100% { transform: scale(0.9); opacity: 0.8; box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+        }
+
+        .temp-unit { font-size: 2rem; color: var(--text-muted); margin-left: 8px; }
+
+        .metrics-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .metric-item { font-size: 0.85rem; color: var(--text-muted); }
+        .metric-item b { display: block; font-size: 1.2rem; color: #fff; margin-top: 5px; font-weight: 600; }
+
+        @media (max-width: 1000px) {
+            .weather-grid { grid-template-columns: 1fr; }
+            .city-card { height: 450px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="dashboard-header">
+        <h1>India Regional Center</h1>
+        <p>Strategic Weather Intelligence • March 2026</p>
+    </header>
+
+    <main class="weather-grid" id="ui-grid">
+        </main>
+
+    <script>
+        const CITIES = [
+            { 
+                name: "Jaipur", 
+                temp: 28, 
+                cond: "Dry / Clear", 
+                hum: "22%", 
+                img: "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&q=80&w=1200" 
+            },
+            { 
+                name: "Delhi", 
+                temp: 24, 
+                cond: "Haze / Sunny", 
+                hum: "32%", 
+                img: "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&q=80&w=1200" 
+            },
+            { 
+                name: "Mumbai", 
+                temp: 31, 
+                cond: "Coastal Haze", 
+                hum: "78%", 
+                img: "https://images.unsplash.com/photo-1566552881560-0be862a7c445?auto=format&fit=crop&q=80&w=1200" 
+            }
+        ];
+
+        const renderApp = () => {
+            const container = document.getElementById('ui-grid');
+            container.innerHTML = CITIES.map(city => `
+                <article class="city-card">
+                    <div class="city-bg" style="background-image: url('${city.img}')"></div>
+                    <div class="scrim"></div>
+                    
+                    <div class="card-content">
+                        <span class="tag">Static Resource</span>
+                        <h2 class="city-name">${city.name}</h2>
+                        
+                        <div class="temp-row">
+                            <span class="temp-val">${city.temp}</span>
+                            <span class="temp-unit">°C</span>
+                        </div>
+
+                        <div class="footer-metrics">
+                            <div class="metric-item">Condition <b>${city.cond}</b></div>
+                            <div class="metric-item">Humidity <b>${city.hum}</b></div>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+        };
+
+        document.addEventListener('DOMContentLoaded', renderApp);
+    </script>
+</body>
+</html>
