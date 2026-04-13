@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIT Nagpur | Web Dev Bootcamp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0f172a; --muted: #64748b; --line: #e2e8f0; --surface: #ffffff;
+      --accent: #6366f1; --accent2: #a855f7; --wa: #25d366; --radius: 14px;
+      --shadow: 0 18px 50px rgba(15, 23, 42, 0.12);
+      --font: "Plus Jakarta Sans", system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: var(--font); color: var(--ink); background: #f8fafc; line-height: 1.55; overflow-x: hidden; }
+    .wrap { width: min(1040px, 92%); margin-inline: auto; }
+
+    /* Header & Hero */
+    .header { position: sticky; top: 0; z-index: 50; background: rgba(248, 250, 252, 0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); padding: 1rem 0; }
+    .hero { background: linear-gradient(145deg, #312e81 0%, #6366f1 40%, #c026d3 100%); color: #fff; padding: 5rem 0; text-align: center; }
+    
+    /* Wizard Styles */
+    .section { padding: 4rem 0; }
+    .card { background: var(--surface); border-radius: var(--radius); padding: 2rem; box-shadow: var(--shadow); max-width: 480px; margin: auto; }
+    .form-step { display: none; animation: rise 0.4s ease both; }
+    .form-step.active { display: block; }
+    
+    h2 { font-size: 1.5rem; margin-bottom: 1rem; font-weight: 800; }
+    input, select { 
+      width: 100%; padding: 0.8rem; margin-bottom: 1.25rem; 
+      border: 1px solid var(--line); border-radius: 10px; font: inherit; 
+      transition: border-color 0.2s;
+    }
+    input:focus { outline: none; border-color: var(--accent); }
+
+    .toolbar { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; justify-content: flex-end; }
+    .btn { 
+      display: inline-flex; align-items: center; justify-content: center; 
+      padding: 0.8rem 1.5rem; border-radius: 99px; border: none; 
+      font-weight: 700; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3); }
+    .btn-mini { font-size: 0.75rem; padding: 0.35rem 0.75rem; background: #f1f5f9; color: var(--ink); border: 1px solid var(--line); }
+    .btn-mini:disabled { opacity: 0.3; cursor: not-allowed; }
+    
+    .step-nav { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1rem; }
+    .btn-back { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+
+    @keyframes rise { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <div class="wrap" style="display:flex; justify-content:space-between; align-items:center;">
+      <strong style="font-weight: 800; letter-spacing: -0.5px;">SIT NAGPUR</strong>
+      <div style="font-size: 0.85rem; font-weight: 600; color: var(--muted);">Web Dev Bootcamp '26</div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <h1 style="font-size: 3rem; margin: 0;">Ignite Your Code</h1>
+        <p style="opacity: 0.9; font-size: 1.1rem;">From absolute zero to job-ready engineer in 16 weeks.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="card">
+          <div class="toolbar">
+            <button type="button" class="btn btn-mini" id="undoBtn" disabled title="Alt+Z">Undo</button>
+            <button type="button" class="btn btn-mini" id="redoBtn" disabled title="Alt+Y">Redo</button>
+          </div>
+
+          <form id="applyForm">
+            <div class="form-step active" data-step="1">
+              <h2>Step 1: Identity</h2>
+              <input name="name" type="text" placeholder="Full Name" required />
+              <input name="email" type="email" placeholder="Email Address" required />
+            </div>
+
+            <div class="form-step" data-step="2">
+              <h2>Step 2: Experience</h2>
+              <select name="experience" required>
+                <option value="">Choose Skill Level</option>
+                <option>Beginner (Zero experience)</option>
+                <option>Basic (Knows HTML/CSS)</option>
+                <option>Intermediate (Knows JS)</option>
+              </select>
+              <input name="phone" type="tel" placeholder="Phone Number" required />
+            </div>
+
+            <div class="step-nav">
+              <button type="button" class="btn btn-back" id="prevBtn" style="visibility:hidden">Back</button>
+              <button type="button" class="btn btn-primary" id="nextBtn">Continue</button>
+            </div>
+          </form>
+          <p id="formNote" style="text-align:center; font-weight: 700; color:#15803d; margin-top:1.5rem;"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function() {
+      const form = document.getElementById("applyForm");
+      const steps = document.querySelectorAll(".form-step");
+      const nextBtn = document.getElementById("nextBtn");
+      const prevBtn = document.getElementById("prevBtn");
+      const undoBtn = document.getElementById("undoBtn");
+      const redoBtn = document.getElementById("redoBtn");
+      let currentStep = 1;
+
+      // --- Navigation Management ---
+      const updateStep = (direction) => {
+        steps[currentStep - 1].classList.remove("active");
+        currentStep += direction;
+        steps[currentStep - 1].classList.add("active");
+        
+        prevBtn.style.visibility = currentStep === 1 ? "hidden" : "visible";
+        nextBtn.textContent = currentStep === steps.length ? "Apply Now" : "Continue";
+      };
+
+      nextBtn.addEventListener("click", () => {
+        const inputs = steps[currentStep - 1].querySelectorAll('input, select');
+        const isValid = Array.from(inputs).every(input => input.checkValidity());
+        
+        if (!isValid) {
+          form.reportValidity();
+          return;
+        }
+
+        if (currentStep < steps.length) updateStep(1);
+        else form.requestSubmit();
+      });
+
+      prevBtn.addEventListener("click", () => updateStep(-1));
+
+      // --- State Management (Undo/Redo) ---
+      const getFields = () => ({
+        name: form.elements.name.value,
+        email: form.elements.email.value,
+        phone: form.elements.phone.value,
+        experience: form.elements.experience.value
+      });
+
+      let stack = [getFields()], i = 0, timer;
+
+      const setFields = (state) => {
+        form.elements.name.value = state.name;
+        form.elements.email.value = state.email;
+        form.elements.phone.value = state.phone;
+        form.elements.experience.value = state.experience;
+        updateUI();
+      };
+
+      const updateUI = () => {
+        undoBtn.disabled = i <= 0;
+        redoBtn.disabled = i >= stack.length - 1;
+      };
+
+      form.addEventListener("input", () => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          const currentState = getFields();
+          if (JSON.stringify(currentState) === JSON.stringify(stack[i])) return;
+          
+          stack = stack.slice(0, i + 1);
+          stack.push(currentState);
+          i = stack.length - 1;
+          updateUI();
+        }, 300);
+      });
+
+      undoBtn.onclick = () => { if (i > 0) setFields(stack[--i]); };
+      redoBtn.onclick = () => { if (i < stack.length - 1) setFields(stack[++i]); };
+
+      // Shortcuts (Alt+Z / Alt+Y)
+      window.onkeydown = (e) => {
+        if (!e.altKey) return;
+        if (e.key.toLowerCase() === "z") { e.preventDefault(); undoBtn.click(); }
+        if (e.key.toLowerCase() === "y") { e.preventDefault(); redoBtn.click(); }
+      };
+
+      // Form Submission
+      form.onsubmit = (e) => {
+        e.preventDefault();
+        document.getElementById("formNote").textContent = "Submission Received! We'll reach out within 24h.";
+        form.reset();
+        stack = [getFields()]; i = 0; updateUI();
+        updateStep(-(currentStep - 1));
+      };
+    })();
+  </script>
+</body>
+</html>
